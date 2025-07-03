@@ -1,27 +1,31 @@
 async function getWeather() {
   const city = document.getElementById('cityInput').value.trim();
-  const apiKey = '0c10448fc4a5e6242a2ee5f1ecfc9d32'; 
+  const apiKey = 'API KEY';
   const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
 
   try {
     const response = await fetch(url);
     const data = await response.json();
-    console.log(data); // shows full response in browser console
 
     if (data.cod === 200) {
+      const iconCode = data.weather[0].icon;
+      const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+
       const weatherInfo = `
-        <p><strong>City:</strong> ${data.name}</p>
-        <p><strong>Temperature:</strong> ${data.main.temp} °C</p>
-        <p><strong>Feels Like:</strong> ${data.main.feels_like} °C</p>
-        <p><strong>Weather:</strong> ${data.weather[0].description}</p>
-        <p><strong>Humidity:</strong> ${data.main.humidity}%</p>
+        <img src="${iconUrl}" alt="Weather Icon" />
+        <p><strong>${data.name}, ${data.sys.country}</strong></p>
+        <p>🌡 Temperature: ${data.main.temp}°C</p>
+        <p>🌥 Weather: ${data.weather[0].main} (${data.weather[0].description})</p>
+        <p>💧 Humidity: ${data.main.humidity}%</p>
+        <p>💨 Wind: ${data.wind.speed} m/s</p>
       `;
+
       document.getElementById('weatherResult').innerHTML = weatherInfo;
     } else {
-      document.getElementById('weatherResult').innerHTML = `<p>❌ City not found: <strong>${city}</strong></p>`;
+      document.getElementById('weatherResult').innerHTML = `<p> City not found: <strong>${city}</strong></p>`;
     }
   } catch (error) {
-    console.error('Error:', error);
-    document.getElementById('weatherResult').innerHTML = `<p>⚠️ Error fetching weather data</p>`;
+    console.error(error);
+    document.getElementById('weatherResult').innerHTML = `<p>Error fetching weather data</p>`;
   }
 }
